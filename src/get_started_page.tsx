@@ -23,9 +23,7 @@ export default function GetStartedPage() {
     const onSubmit: SubmitHandler<IFormInput> = (data) => {
         navigate("/get_started_page_2");
         console.log(data);
-        console.log("Hello world");
-        const formValues = { ...data, password: "" };
-        console.log(formValues);
+        localStorage.setItem("user_data", JSON.stringify(data));
         /*console.log(data);
         // Send a POST request to the API endpoint with the form data
         const response = fetch("http://localhost:8000/trail-marker-accounts/users/",{

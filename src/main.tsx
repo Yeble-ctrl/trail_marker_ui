@@ -1,10 +1,9 @@
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import Landing_page from './landing_page'
 import GetStartedPage from './get_started_page'
-import GetStartedPage2 from './get_started_page'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import GetStartedPage2 from './get_started_page_2'
 
 createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
