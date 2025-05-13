@@ -1,5 +1,7 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import FormInput from "./custom_components/form_input";
 
 interface IFormInput {
     password: string;
@@ -9,6 +11,7 @@ interface IFormInput {
 export default function GetStartedPage2() {
     const { register, handleSubmit, watch, formState: {errors} } = useForm<IFormInput>();
     const watchField = watch(["password", "confirm_password"], { password: " ", confirm_password: " " });
+    const navigate = useNavigate();
 
     const onSubmit: SubmitHandler<IFormInput> = (data) => {
         // get the user data from session storage
@@ -25,7 +28,32 @@ export default function GetStartedPage2() {
             body: JSON.stringify(user_data)}
         )
         response.then((res) => {
-            if (res.ok) { alert("User created successfully") }
+            // if the response is okay, log the user in
+            // then navigate to the profile setup page
+            if (res.ok) {
+                fetch('http://localhost:8000/api/token/', {
+                    method: 'POST',
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({username: user_data.username, password: data.password}),
+                })
+                .then((res) => {
+                    if (res.ok) {
+                        // if the response is okay, get the access and refresh tokens and store them.
+                        res.json().then((resObj) => {
+                            localStorage.setItem('access_token', resObj.access);
+                            localStorage.setItem('refresh_token', resObj.refresh);
+                            localStorage.setItem('username', user_data.username);
+                            sessionStorage.removeItem("user_data");
+                            navigate('/home_page'); // navigate the user to the profile setup page
+                        });
+                    } else {
+                        alert("Error logging in: " + res.statusText); // TODO: handle error response
+                    }
+                })
+                .catch((error) => {
+                    alert("Error logging in: " + error.message) // TODO: handle error response
+                })
+            }
             else {
                 res.text().then((text) => {
                     console.log(text) // TODO: handle error response
@@ -38,30 +66,28 @@ export default function GetStartedPage2() {
     }
 
     return (
-        <div className="flex flex-col justify-center items-center font-grotesk h-screen bg-gradient-to-b from-[#F5F5F5] to-[#FFFFFF] gap-4 p-2">
+        <div className="flex flex-col justify-center items-center font-grotesk h-screen bg-gradient-to-b from-[#F5F5F5] to-[#FFFFFF] gap-2 p-2">
             <h1 className="text-3xl text-purple-600 font-black">Get started</h1>
-
-            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2 mb-4 w-1/2 md:w-auto items-center text-center">
-                <p className="text-gray-500 text-sm">Password must be at least 8 characters</p>
+            <h1 className="text-gray-700 text-sm">Enter your password with atleast 8 characters</h1>
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2 mb-4 md:w-auto items-center text-center">
                 {/* password field */}
-                <input
-                    {...register("password", { required: true, minLength: {value: 8, message: "Password must be at least 8 characters" } })}
-                    className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-purple-500
-                    placeholder:text-gray-400 placeholder:font-light placeholder:text-sm"
-                    placeholder="password"
-                    type = "password"
+                <FormInput
+                    register={register} 
+                    name="password" 
+                    placeholder="password" 
+                    type="password" 
+                    validators={{ required: {value: true, message:'Please provide your password'}, minLength: {value: 8, message: 'Password must be at least 8 characters'} }}
                 />
                 {/* error message for password field */}
                 {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
 
                 {/* confirm password field */}
-                <input
-                    {...register("confirm_password", { required: true,
-                        validate: (value) => value === watchField[0] || "Passwords do not match" })}
-                    className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-purple-500   
-                    placeholder:text-gray-400 placeholder:font-light placeholder:text-sm"
-                    placeholder="confirm password"
-                    type = "password"
+                <FormInput
+                    register={register} 
+                    name="confirm_password" 
+                    placeholder="confirm password" 
+                    type="password" 
+                    validators={{ required: {value: true, message:'Please confirm your password'}, validate: (value) => value === watchField[0] || "Passwords do not match" }}
                 />
                 {/* error message for confirm password field */}
                 {errors.confirm_password && <p className="text-red-500 text-sm">{errors.confirm_password.message}</p>}

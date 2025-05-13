@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 
+/* TODO: implement generic method for fetching data
+accepts the following arguments: url, method, stateVarSetter? */
+
 export default function HomePage(){
     const [user, setUser] = useState('');
     useEffect(() => {
         /* make an API call to get the user data */
-        const getUser = fetch( 'http://localhost:8000/trail-marker-accounts/users/yewo/', {
+        const getUser = fetch( `http://localhost:8000/trail-marker-accounts/users/${localStorage.getItem('username')}/`, {
             method: 'GET',
             headers: {
                 "Content-Type": "application/json",

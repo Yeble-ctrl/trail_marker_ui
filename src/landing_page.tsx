@@ -11,7 +11,7 @@ export default function Landing_page(){
                 <Link to={"/get_started_page"}>
                     <Button className="w-30 text-lg bg-purple-600">Get started</Button>
                 </Link>
-                <Link to={"/login"}>
+                <Link to={"/login_page"}>
                     <Button className="w-30 text-lg bg-purple-600 ml-4">Login</Button>
                 </Link>
             </div>

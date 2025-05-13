@@ -2,6 +2,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect } from "react";
+import FormInput from "./custom_components/form_input";
 
 interface IFormInput {
     first_name: string;
@@ -44,57 +45,61 @@ export default function GetStartedPage() {
         sessionStorage.setItem("user_data", JSON.stringify(data));
     }
     return (
-        <div className="flex flex-col justify-center items-center font-grotesk h-screen bg-gradient-to-b from-[#F5F5F5] to-[#FFFFFF] gap-4 p-2">
+        <div className="flex flex-col justify-center items-center font-grotesk h-screen bg-gradient-to-b from-[#F5F5F5] to-[#FFFFFF] gap-2 p-2">
             <h1 className="text-3xl text-purple-600 font-black">Get started</h1>
-
-            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2 mb-4 w-1/2 md:w-auto items-center text-center">
-
+            <h1 className="text-gray-700 text-sm">Please enter your details</h1>
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2 mb-4 md:w-auto items-center text-center">
                 {/* first name field */}
-                <p className="text-gray-600 text-sm">Please enter your details</p>
-                <input
-                    {...register("first_name", { required: true })}
-                    className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-purple-500
-                    placeholder:text-gray-400 placeholder:font-light placeholder:text-sm"
-                    placeholder="first name"
-                    type="text"
+                <FormInput
+                    register={register} 
+                    name="first_name" 
+                    placeholder="first name" 
+                    type="text" 
+                    validators={{ required: {value: true, message:'Please provide your first name'} }}
                 />
+                {/* error message for first name field */}
+                {errors.first_name && <p className="text-red-500 text-sm">{errors.first_name.message}</p>}
 
                 {/* last name field */}
-                <input
-                    {...register("last_name", { required: true })}
-                    className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-purple-500
-                    placeholder:text-gray-400 placeholder:font-light placeholder:text-sm"
-                    placeholder="last name"
-                    type="text"
+                <FormInput
+                    register={register} 
+                    name="last_name" 
+                    placeholder="last name" 
+                    type="text" 
+                    validators={{ required: {value: true, message:'Please provide your last name'} }}
                 />
+                {/* error message for last name field */}
+                {errors.last_name && <p className="text-red-500 text-sm">{errors.last_name.message}</p>}
 
                 {/* username field */}
-                <input
-                    {...register("username", { required: true, minLength: {value:4, message:'Username cannot be less than 4 characters'},
+                <FormInput
+                    register={register} 
+                    name="username" 
+                    placeholder="username" 
+                    type="text" 
+                    validators={{ required: {value: true, message:'Please provide your username'}, 
                         validate: (value) => {
                             if (usernames.includes(value)) {
                                 return "Username already exists";
                             } else {
                                 return true;
                             }
-                        }})}
-                    className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-purple-500
-                    placeholder:text-gray-400 placeholder:font-light placeholder:text-sm"
-                    placeholder="username"
-                    type="text"
+                        }
+                    }}
                 />
-                
-                {/* email field */}
-                <input
-                    {...register("email", { required: true })}
-                    className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-purple-500
-                    placeholder:text-gray-400 placeholder:font-light placeholder:text-sm"
-                    placeholder="email address"
-                    type="email"
-                />
-                    
                 {/* error message for username field */}
                 {errors.username && <p className="text-red-500 text-sm">{errors.username.message}</p>}
+                
+                {/* email field */}
+                <FormInput
+                    register={register} 
+                    name="email" 
+                    placeholder="email" 
+                    type="email" 
+                    validators={{ required: {value: true, message:'Please provide your email'} }}
+                />
+                {/* error message for email field */}
+                {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
 
                 <Button className="w-30 text-base bg-purple-600" type="submit">Proceed</Button>
             </form>
