@@ -18,20 +18,19 @@ export default function GetStartedPage() {
     // and set them to the state variable usernames
     // this will be used to check if the username already exists
     useEffect(() => {
-        const fetchUsers = fetch("http://localhost:8000/trail-marker-accounts/users/", {method: "GET"})
-        fetchUsers.then((res) => {
+        const userData = fetch("http://localhost:8000/trail-marker-accounts/users/", {method: "GET"});
+        userData.then((res) => {
             if (res.ok) {
                 res.json().then((data) => {
                     let usernames: string[] = [];
                     data.map((user: IFormInput) => usernames.push(user.username));
                     setUsernames(usernames);
-                })
-            } else {
-                res.text().then((text) => {console.log(text)})
+                });
             }
+            else throw new Error(res.statusText);
         })
         .catch((error) => {
-            alert("Error fetching users: " + error.message)
+            console.error("Error fetching usernames:", error);
         })
     }, [])
 

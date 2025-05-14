@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import GetStartedPage2 from './get_started_page_2'
 import HomePage from './home_page'
 import LoginPage from './login_page'
+import WelcomePage from './welcome_page'
+import SetUpProfilePage from './setup_profile_page'
 
 createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
@@ -15,6 +17,8 @@ createRoot(document.getElementById('root')!).render(
       <Route path="/get_started_page_2" element={<GetStartedPage2 />} />
       <Route path='login_page' element={<LoginPage/>}/>
       <Route path='/home_page' element={<HomePage/>} />
+      <Route path='/setup_profile_page' element={<SetUpProfilePage/>} />
+      <Route path='/welcome_page' element={<WelcomePage/>} />
     </Routes>
   </BrowserRouter>,
 )

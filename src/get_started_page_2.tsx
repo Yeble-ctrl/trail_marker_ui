@@ -20,16 +20,15 @@ export default function GetStartedPage2() {
         user_data.password = data.password
 
         // make a POST request to the API endpoint with the form data
-        const response = fetch("http://localhost:8000/trail-marker-accounts/users/",{
+        const fetchOptions = { 
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(user_data)}
-        )
-        response.then((res) => {
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(user_data) 
+        };
+        const createUser = fetch( "http://localhost:8000/trail-marker-accounts/users/", fetchOptions);
+        createUser.then((res) => {
             // if the response is okay, log the user in
-            // then navigate to the profile setup page
+            // then navigate to the profile setup page 
             if (res.ok) {
                 fetch('http://localhost:8000/api/token/', {
                     method: 'POST',
@@ -46,12 +45,11 @@ export default function GetStartedPage2() {
                             sessionStorage.removeItem("user_data");
                             navigate('/home_page'); // navigate the user to the profile setup page
                         });
-                    } else {
-                        alert("Error logging in: " + res.statusText); // TODO: handle error response
                     }
+                    else throw new Error("Error logging in: " + res.statusText);
                 })
                 .catch((error) => {
-                    alert("Error logging in: " + error.message) // TODO: handle error response
+                    throw error
                 })
             }
             else {
