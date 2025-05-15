@@ -1,7 +1,6 @@
 import { Button } from "./components/ui/button";
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm, SubmitHandler } from "react-hook-form";
-import FormInput from "./custom_components/form_input";
 
 interface IFormInput {
     user_description: string;
