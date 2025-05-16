@@ -43,7 +43,7 @@ export default function GetStartedPage2() {
                             localStorage.setItem('refresh_token', resObj.refresh);
                             localStorage.setItem('username', user_data.username);
                             sessionStorage.removeItem("user_data");
-                            navigate('/home_page'); // navigate the user to the profile setup page
+                            navigate('/welcome_page'); // navigate the user to the profile setup page
                         });
                     }
                     else throw new Error("Error logging in: " + res.statusText);
