@@ -19,7 +19,7 @@ export default function HomePage() {
     };
 
     const fetchUserProfile = () => {
-        return fetch(`http://localhost:8000/profiles/profiles/`, {
+        return fetch(`http://localhost:8000/profiles/profile-details/`, {
             method: 'GET',
             headers: {
                 "Content-Type": "application/json",
