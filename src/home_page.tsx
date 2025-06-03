@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function HomePage() {
     const [user, setUser] = useState('');
+    const [userProfile, setUserProfile] = useState('');
     const navigate = useNavigate();
 
     // function to fetch user data
@@ -16,6 +17,16 @@ export default function HomePage() {
             }
         });
     };
+
+    const fetchUserProfile = () => {
+        return fetch(`http://localhost:8000/profiles/profiles/`, {
+            method: 'GET',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${localStorage.getItem('access_token')}`
+            }
+        });
+    };    
 
     useEffect(() => {
         fetchUserData()
@@ -39,6 +50,55 @@ export default function HomePage() {
                                 navigate('/login_page');
                             }
                         })
+
+                        // Retry to fetch user Profile
+                        .then(() => {
+                            return fetchUserProfile();
+                        })
+                        .then((res) => {
+                            if(res.ok){
+                                res.json().then((resObj) => {
+                                    setUserProfile(JSON.stringify(resObj));
+                                })
+                            }
+                        })
+
+                        // Catch any errors in trying to refresh the token
+                        .catch((error) => {
+                            alert("Error refreshing token: " + error.message);
+                            navigate('/login_page');
+                        });
+                } else {
+                    throw new Error(res.statusText);
+                }
+            })
+            .catch((error) => {
+                alert("Error getting user data: " + error.message);
+                navigate('/login_page');
+            });
+        
+        // fetch the user profile data
+        fetchUserProfile()
+            .then((res) => {
+                if (res.ok) {
+                    res.json().then((resObj) => {
+                        setUserProfile(JSON.stringify(resObj));
+                    });
+                } else if (res.status === 401) {
+                    // Try to refresh token and retry fetching user data
+                    refreshToken()
+                        .then(() => {
+                            return fetchUserData();
+                        })
+                        .then((retryRes) => {
+                            if (retryRes && retryRes.ok) {
+                                retryRes.json().then((resObj) => {
+                                    setUserProfile(JSON.stringify(resObj));
+                                });
+                            } else {
+                                navigate('/login_page');
+                            }
+                        })
                         .catch((error) => {
                             alert("Error refreshing token: " + error.message);
                             navigate('/login_page');
@@ -55,8 +115,9 @@ export default function HomePage() {
 
     return (
         <div className="flex flex-col justify-center items-center font-grotesk h-screen bg-gradient-to-b from-[#F5F5F5] to-[#FFFFFF] gap-4 p-2">
-            <h1 className="text-3xl text-purple-600 font-black">Welcome {user}</h1>
+            <h1 className="text-3xl text-purple-600 font-black">Welcome</h1>
             <p className="text-gray-500 text-sm">This is your home page</p>
+            <p className="text-purple-600 font-black">{user} <br /> {userProfile} </p>
         </div>
     );
 }
