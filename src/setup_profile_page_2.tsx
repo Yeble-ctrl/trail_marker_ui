@@ -9,17 +9,21 @@ interface IFormInput {
 }
 
 export default function SetUpProfilePage2() {
-    const[image, setImage] = useState('')
+    // State variables for tracking image changes 
+    const[imageUrl, setImageUrl] = useState('');
+    const[image, setImage] = useState<File | null>()
+    
     const navigate = useNavigate();
     const {register, handleSubmit} = useForm<IFormInput>();
     const onsubmit: SubmitHandler<IFormInput> = (data) => {
         let userProfileData = JSON.parse(localStorage.getItem('userProfileData') || '{}');
         let formData = new FormData();
+        console.log(image?.type);
         formData.append('user', localStorage.getItem('username') || '');
         formData.append('dateOfBirth', userProfileData.date_of_birth);
         formData.append('gender', userProfileData.gender);
         formData.append('userDescription', data.user_description);
-        formData.append('profilePicture', data.profile_picture[0])
+        formData.append('profilePicture', image || '');
 
         const fetchOptions = {
             method: 'POST',
@@ -57,23 +61,24 @@ export default function SetUpProfilePage2() {
                         id="user_description"
                     />
                 </label>
-                <label 
+                <label
                     className="flex flex-col items-center justify-center text-center h-28 cursor-pointer font-medium text-gray-600 border-2 border-gray-300 border-dashed rounded-md p-2"
                 >
                     <input
                         {...register('profile_picture', {required: false})}
                         type="file"
-                        accept="image/png, image/jpeg"
+                        accept="image/*"
                         hidden
                         onChange={(property) => {
                             if(property.target.files !== null){
+                                setImage(property.target.files[0])
                                 let imageUrl = URL.createObjectURL(property.target.files[0]);
-                                setImage(imageUrl)
+                                setImageUrl(imageUrl)
                             }
                         }}
                     />                    
-                    {image.length? <img src={image} alt="upload" className="h-28"/> : <img src="/upload_icon.svg" alt="upload" className="w-20 h-20"/> }
-                    {image.length? '' : <p className="font-medium text-base">Upload profile photo</p>}
+                    {imageUrl.length? <img src={imageUrl} alt="upload" className="h-28"/> : <img src="/upload_icon.svg" alt="upload" className="w-20 h-20"/> }
+                    {imageUrl.length? '' : <p className="font-medium text-base">Upload profile photo</p>}
                 </label>
                 <div className="flex flex-row justify-center items-center pt-4">
                     <Button className="w-30 text-lg bg-purple-600" type="submit">Proceed</Button>
